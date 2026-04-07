@@ -57,6 +57,71 @@ app.post("/events", async (req, res) => {
   }
 });
 
+//ENDPOINT para agrupar eventos por tipo
+app.get("/stats/events-by-type", async (req, res) => {  //La ruta para las estadisticas
+  try {
+    const [rows] = await db.query(
+      `SELECT event_type, COUNT(*) AS total
+      FROM events
+      GROUP BY event_type
+      ORDER BY total DESC`);
+      res.json(rows);
+  } catch (error){
+    console.error(error);
+    res.status(500).json({ error: "Error fetching event stats"});
+  }
+});
+
+//ENDPOINT para agrupar eventos por dia
+app.get("/stats/events-by-day", async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT DATE_FORMAT(created_at "%Y-%m-%d") AS date, COUNT(*) AS total FROM events, GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d"), ORDER BY date ASC'
+    ); //Convertimos el dateformat, contamos cuantos y agrupamos por dia los eventos
+    res.json(rows);
+  } catch (error){
+    console.error(error);
+    res.status(500).json({ error: "Error fetching events by day"});
+  }
+});
+
+// ENDPOINT para obtner las paginas con mas actividad
+app.get("/stats/top-pages", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT page, COUNT(*) AS total
+      FROM events
+      WHERE page IS NOT NULL AND page <> ''
+      GROUP BY page
+      ORDER BY total DESC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error fetching top pages" });
+  }
+});
+
+// ENDPOINT para obtener los titulos con mas actividad
+app.get("/stats/top-titles", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT events.title_id, titles.name AS title, COUNT(*) AS total
+      FROM events
+      JOIN titles ON events.title_id = titles.id
+      WHERE events.title_id IS NOT NULL
+      GROUP BY events.title_id, titles.name
+      ORDER BY total DESC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error fetching top titles" });
+  }
+});
+
 // Comprobacion de cnexion a la bbdd
 db.getConnection()
   .then((connection) => {

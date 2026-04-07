@@ -5,3 +5,4 @@ VALUES ('test@streammetrics.com', '123456');
 
 select * from users;
 
+select * from events;

@@ -9,48 +9,49 @@ const app = express();
 app.use(cors()); // middleware para permitir peticiones externas
 app.use(express.json()); //middleware para que express entieenda json
 
+//-----------------------------------------------------------------------------------
+
 // ENDPOINT de prueba para comprobar que el serv funciona
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
 //ENDPONINT para obtrener todos los titulos
-app.get("/titles", async (req, res)=> {
+app.get("/titles", async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM titles");
     res.json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error fetching titles"});
+    res.status(500).json({ error: "Error fetching titles" });
   }
 });
 
 //ENDPOINT para obtener tdos los eventos
-app.get("/events", async (req, res) =>{
+app.get("/events", async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM events");
     res.json(rows);
-  } catch (error){
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error fetching events"});
+    res.status(500).json({ error: "Error fetching events" });
   }
 });
 
 //ENDPOINT para guardar eventos
 app.post("/events", async (req, res) => {
   try {
-    const { user_id, event_type, page, title_id } = req.body;//Lo que envia el cliente
+    const { user_id, event_type, page, title_id } = req.body; //Lo que envia el cliente
 
     const [result] = await db.query(
-      "INSERT INTO events (user_id, event_type, page, title_id) VALUES (?, ?, ?, ?)",//placeholders para evitar SQL injections
-      [user_id, event_type, page, title_id]//guarda el evento en la bbdd
+      "INSERT INTO events (user_id, event_type, page, title_id) VALUES (?, ?, ?, ?)", //placeholders para evitar SQL injections
+      [user_id, event_type, page, title_id], //guarda el evento en la bbdd
     );
 
     res.status(201).json({
       message: "Event created",
-      id: result.insertId //id del evento creado
+      id: result.insertId, //id del evento creado
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error creating event" });
@@ -58,30 +59,36 @@ app.post("/events", async (req, res) => {
 });
 
 //ENDPOINT para agrupar eventos por tipo
-app.get("/stats/events-by-type", async (req, res) => {  //La ruta para las estadisticas
+app.get("/stats/events-by-type", async (req, res) => {
+  //La ruta para las estadisticas
   try {
     const [rows] = await db.query(
       `SELECT event_type, COUNT(*) AS total
       FROM events
       GROUP BY event_type
-      ORDER BY total DESC`);
-      res.json(rows);
-  } catch (error){
+      ORDER BY total DESC`,
+    );
+    res.json(rows);
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error fetching event stats"});
+    res.status(500).json({ error: "Error fetching event stats" });
   }
 });
 
-//ENDPOINT para agrupar eventos por dia
+// ENDPOINT para agrupar eventos por día
 app.get("/stats/events-by-day", async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT DATE_FORMAT(created_at "%Y-%m-%d") AS date, COUNT(*) AS total FROM events, GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d"), ORDER BY date ASC'
-    ); //Convertimos el dateformat, contamos cuantos y agrupamos por dia los eventos
+      'SELECT DATE_FORMAT(created_at, "%Y-%m-%d") AS date, COUNT(*) AS total FROM events GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d") ORDER BY date ASC'
+    );
+
     res.json(rows);
-  } catch (error){
-    console.error(error);
-    res.status(500).json({ error: "Error fetching events by day"});
+  } catch (error) {
+    console.error("Error fetching events by day:", error);
+    res.status(500).json({
+      error: "Error fetching events by day",
+      details: error.message
+    });
   }
 });
 
@@ -106,14 +113,33 @@ app.get("/stats/top-pages", async (req, res) => {
 // ENDPOINT para obtener los titulos con mas actividad
 app.get("/stats/top-titles", async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { from, to } = req.query;
+
+    let query = `
       SELECT events.title_id, titles.name AS title, COUNT(*) AS total
       FROM events
       JOIN titles ON events.title_id = titles.id
       WHERE events.title_id IS NOT NULL
+    `;
+
+    const params = [];
+
+    if (from) {
+      query += ` AND DATE(events.created_at) >= ?`;
+      params.push(from);
+    }
+
+    if (to) {
+      query += ` AND DATE(events.created_at) <= ?`;
+      params.push(to);
+    }
+
+    query += `
       GROUP BY events.title_id, titles.name
       ORDER BY total DESC
-    `);
+    `;
+
+    const [rows] = await db.query(query, params);
 
     res.json(rows);
   } catch (error) {
@@ -121,6 +147,8 @@ app.get("/stats/top-titles", async (req, res) => {
     res.status(500).json({ error: "Error fetching top titles" });
   }
 });
+
+//--------------------------------------------------------------------------
 
 // Comprobacion de cnexion a la bbdd
 db.getConnection()

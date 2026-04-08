@@ -95,18 +95,40 @@ app.get("/stats/events-by-day", async (req, res) => {
 // ENDPOINT para obtner las paginas con mas actividad
 app.get("/stats/top-pages", async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { from, to } = req.query;
+
+    let query = `
       SELECT page, COUNT(*) AS total
       FROM events
       WHERE page IS NOT NULL AND page <> ''
+    `;
+
+    const params = [];
+
+    if (from) {
+      query += ` AND DATE(created_at) >= ?`;
+      params.push(from);
+    }
+
+    if (to) {
+      query += ` AND DATE(created_at) <= ?`;
+      params.push(to);
+    }
+
+    query += `
       GROUP BY page
       ORDER BY total DESC
-    `);
+    `;
+
+    const [rows] = await db.query(query, params);
 
     res.json(rows);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error fetching top pages" });
+    console.error("Error fetching top pages:", error);
+    res.status(500).json({
+      error: "Error fetching top pages",
+      details: error.message
+    });
   }
 });
 
@@ -145,6 +167,82 @@ app.get("/stats/top-titles", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error fetching top titles" });
+  }
+});
+
+// ENDPOINT para obtener usuarios activos
+app.get("/stats/active-users", async (req, res) => {
+  try {
+    const { from, to } = req.query;
+
+    let query = `
+      SELECT COUNT(DISTINCT user_id) AS active_users
+      FROM events
+      WHERE user_id IS NOT NULL
+    `;
+
+    const params = [];
+
+    if (from) {
+      query += ` AND DATE(created_at) >= ?`;
+      params.push(from);
+    }
+
+    if (to) {
+      query += ` AND DATE(created_at) <= ?`;
+      params.push(to);
+    }
+
+    const [rows] = await db.query(query, params);
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error fetching active users:", error);
+    res.status(500).json({
+      error: "Error fetching active users",
+      details: error.message
+    });
+  }
+});
+
+// ENDPOINT para obtener usuarios activos por diia
+app.get("/stats/active-users-by-day", async (req, res) => {
+  try {
+    const { from, to } = req.query;
+
+    let query = `
+      SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS date,
+             COUNT(DISTINCT user_id) AS active_users
+      FROM events
+      WHERE user_id IS NOT NULL
+    `;
+
+    const params = [];
+
+    if (from) {
+      query += ` AND DATE(created_at) >= ?`;
+      params.push(from);
+    }
+
+    if (to) {
+      query += ` AND DATE(created_at) <= ?`;
+      params.push(to);
+    }
+
+    query += `
+      GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
+      ORDER BY date ASC
+    `;
+
+    const [rows] = await db.query(query, params);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching active users by day:", error);
+    res.status(500).json({
+      error: "Error fetching active users by day",
+      details: error.message
+    });
   }
 });
 

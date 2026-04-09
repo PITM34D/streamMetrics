@@ -58,6 +58,22 @@ app.post("/events", async (req, res) => {
   }
 });
 
+//ENDPOINT para total de eventos
+app.get("/stats/total-events", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT COUNT(*) AS total_events
+      FROM events
+    `);
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error al obtener total de eventos:", error);
+    res.status(500).json({ error: "Error al obtener total de eventos" });
+  }
+});
+
+
 //ENDPOINT para agrupar eventos por tipo
 app.get("/stats/events-by-type", async (req, res) => {
   //La ruta para las estadisticas
@@ -79,7 +95,7 @@ app.get("/stats/events-by-type", async (req, res) => {
 app.get("/stats/events-by-day", async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT DATE_FORMAT(created_at, "%Y-%m-%d") AS date, COUNT(*) AS total FROM events GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d") ORDER BY date ASC'
+      'SELECT DATE_FORMAT(created_at, "%Y-%m-%d") AS date, COUNT(*) AS total FROM events GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d") ORDER BY date ASC',
     );
 
     res.json(rows);
@@ -87,7 +103,7 @@ app.get("/stats/events-by-day", async (req, res) => {
     console.error("Error fetching events by day:", error);
     res.status(500).json({
       error: "Error fetching events by day",
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -127,7 +143,7 @@ app.get("/stats/top-pages", async (req, res) => {
     console.error("Error fetching top pages:", error);
     res.status(500).json({
       error: "Error fetching top pages",
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -200,7 +216,7 @@ app.get("/stats/active-users", async (req, res) => {
     console.error("Error fetching active users:", error);
     res.status(500).json({
       error: "Error fetching active users",
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -241,7 +257,7 @@ app.get("/stats/active-users-by-day", async (req, res) => {
     console.error("Error fetching active users by day:", error);
     res.status(500).json({
       error: "Error fetching active users by day",
-      details: error.message
+      details: error.message,
     });
   }
 });

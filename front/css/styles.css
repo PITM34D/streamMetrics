@@ -1,0 +1,180 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ESTILOS GENERALES ----------------------------- */
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f7fb;
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+.dashboard-container{
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* HEADER ----------------------------------------- */
+
+.dashboard-header{
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-header h1{
+    font-size: 2rem; 
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-header p{
+    color: #6b7280;
+}
+
+/* MAIN LAYOUT ------------------------------------- */
+
+.dashboard-main{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* SECCIONES --------------------------------------- */
+
+.filters-section,
+.kpi-section,
+.chart-section,
+.rankings-section{
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filters-section h2,
+.kpi-section h2,
+.chart-section h2,
+.rankings-section h2{
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+/* KPI GRID --------------------------------------- */
+
+.kpi-grid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.kpi-card{
+    background-color: #f9fafb;
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+}
+
+.kpi-card h3{
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.kpi-card p{
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* CHART BOX ----------------------------------------- */
+
+.chart-box{
+    min-height: 250px;
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    background-color: #f9fafb;
+    text-align: center;
+    padding: 1rem;
+}
+
+.chart-list{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.chart-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.chart-label{
+    font-weight: 600;
+    color: #374151;
+}
+
+.chart-value{
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* RANKINGS ------------------------------------------ */
+
+.rankings-grid{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.rankings-card{
+    background-color: #f9fafb;
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+}
+
+.rankings-card h3{
+    margin-bottom: 0.75rem;
+}
+
+.rankings-card ul{
+    list-style: none;
+}
+
+.rankings-card li{
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rankings-card li:last-child{
+    border-bottom: none;
+}
+
+/* RESPONSIVE ------------------------------------- */
+
+@media (min-width: 768px){
+    .dashboard-container {
+        padding: 1.5rem;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rankings-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

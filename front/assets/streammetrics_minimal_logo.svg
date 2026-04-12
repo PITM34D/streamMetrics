@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" fill="none">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2EA7FF"/>
+      <stop offset="100%" stop-color="#5B2DFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon -->
+  <g transform="translate(40,50)">
+    <path d="M0 30C0 10 20 0 35 8L170 95C185 103 185 122 170 130L35 217C20 225 0 215 0 195V30Z" 
+          fill="none" stroke="url(#grad)" stroke-width="8" stroke-linejoin="round"/>
+
+    <!-- Bars -->
+    <rect x="35" y="140" width="14" height="40" fill="url(#grad)" rx="2"/>
+    <rect x="60" y="115" width="14" height="65" fill="url(#grad)" rx="2"/>
+    <rect x="85" y="85" width="14" height="95" fill="url(#grad)" rx="2"/>
+  </g>
+
+  <!-- Text -->
+  <text x="240" y="140"
+    font-family="Inter, Arial, sans-serif"
+    font-size="80"
+    font-weight="700"
+    fill="#1F2937">Stream</text>
+
+  <text x="480" y="140"
+    font-family="Inter, Arial, sans-serif"
+    font-size="80"
+    font-weight="700"
+    fill="url(#grad)">Metrics</text>
+
+  <!-- Tagline -->
+  <text x="245" y="190"
+    font-family="Inter, Arial, sans-serif"
+    font-size="20"
+    letter-spacing="6"
+    fill="#6B7280">ANALYZE · UNDERSTAND · GROW</text>
+</svg>

@@ -8,7 +8,7 @@
 
 body{
     font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+    background: #f3f4f6;
     color: #111827;
     line-height: 1.5;
 }
@@ -41,6 +41,9 @@ body{
 /* MAIN LAYOUT ------------------------------------- */
 
 .dashboard-main{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -76,7 +79,7 @@ body{
 
 .filters-form{
     display: flex;
-    flex-direction: column;
+    flex-direction:column;
     gap: 1rem;
 }
 
@@ -131,6 +134,12 @@ body{
     transform: translateY(-1px);
 }
 
+.filters-error{
+    color: #ff4d4f;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
 /* KPI GRID --------------------------------------- */
 
 .kpi-grid{
@@ -179,63 +188,78 @@ body{
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.9rem;
 }
 
 .chart-row{
     display: grid;
-    grid-template-columns: 110px 1fr 70px;
+    grid-template-columns: 95px 1fr 45px;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.85rem 1rem;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
 }
 
 .chart-label{
+    font-size: 0.9rem;
     font-weight: 600;
     color: #374151;
-    font-size: 0.92rem;
+}
+
+.chart-bar-wrapper{
+    width: 100%;
+}
+
+.chart-bar-track{
+    width: 100%;
+    height: 14px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.chart-bar-fill{
+    height: 100%;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    border-radius: 999px;
+    transition: width 0.35s ease;
 }
 
 .chart-value{
-    color: #4338ca;
-    font-weight: 700;
     text-align: right;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e3a8a;
 }
 
 /* RANKINGS ------------------------------------------ */
 
-.rankings-grid{
+.ranking-grid{
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
 }
 
-.rankings-card{
+.ranking-card{
     background: #f8fafc;
     border-radius: 16px;
     padding: 1rem;
     border: 1px solid #e5e7eb;
 }
 
-.rankings-card h3{
+.ranking-card h3{
     margin-bottom: 0.85rem;
     color: #111827;
 }
 
-.rankings-card ul{
+.ranking-card ul{
     list-style: none;
 }
 
-.rankings-card li{
+.ranking-card li{
     padding: 0.5rem 0;
     border-bottom: 1px solid #e5e7eb;
 }
 
-.rankings-card li:last-child{
+.ranking-card li:last-child{
     border-bottom: none;
 }
 

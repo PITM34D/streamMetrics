@@ -1,15 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const activeUsersValue = document.getElementById("active-users-value");
   const totalEventsValue = document.getElementById("total-events-value");
-  const eventsChartContainer = document.getElementById(
-    "events-chart-container",
-  );
+  const eventsChartContainer = document.getElementById("events-chart-container",);
   const topPagesList = document.getElementById("top-pages-list");
   const topTitlesList = document.getElementById("top-titles-list");
   const fromDateInput = document.getElementById("from-date");
   const toDateInput = document.getElementById("to-date");
   const applyFiltersBtn = document.getElementById("apply-filters-btn");
   const resetFiltersBtn = document.getElementById("reset-filters-btn");
+  const filtersError = document.getElementById("filters-error");
 
   const API_BASE_URL = "http://localhost:3000";
 
@@ -26,6 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const queryString = params.toString();
     return queryString ? `?${queryString}` : "";
+  }
+
+  function validateDates(from, to) {
+    if (from && to && from > to) {
+      return "La fecha 'Desde' no puede ser mayor que 'Hasta'";
+    }
+
+    return null;
   }
 
   async function loadActiveUsers() {
@@ -100,17 +107,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      const maxTotal = Math.max(...data.map((item) => item.total));
+
       const chartHtml = data
         .map((item) => {
           const date = item.date ?? "Fecha desconocida";
           const total = item.total ?? 0;
+          const percentage = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
 
           return `
-        <div class="chart-row">
-          <span class="chart-label">${date}</span>
-          <span class="chart-value">${total} eventos</span>
-        </div>
-      `;
+            <div class="chart-row">
+              <span class="chart-label">${date}</span>
+
+              <div class="chart-bar-wrapper">
+                <div class="chart-bar-track">
+                  <div class="chart-bar-fill" style="width: ${percentage}%"></div>
+                </div>
+              </div>
+
+              <span class="chart-value">${total}</span>
+            </div>
+          `;
         })
         .join("");
 
@@ -201,7 +218,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function setLoadingState() {
+  activeUsersValue.textContent = "...";
+  totalEventsValue.textContent = "...";
+
+  eventsChartContainer.innerHTML = "<p>Cargando datos...</p>";
+
+  topPagesList.innerHTML = "<li>Cargando...</li>";
+  topTitlesList.innerHTML = "<li>Cargando...</li>";
+}
+
   async function loadDashboardData() {
+    setLoadingState();
+
     await loadActiveUsers();
     await loadTotalEvents();
     await loadEventsByDay();
@@ -209,27 +238,41 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadTopTitles();
   }
 
-async function init() {
-  console.log("Dashboard de StreamMetrics cargado");
+  async function init() {
+    console.log("Dashboard de StreamMetrics cargado");
 
-  applyFiltersBtn.addEventListener("click", async () => {
-    console.log("Filtros aplicados:", {
-      from: fromDateInput.value,
-      to: toDateInput.value,
-      query: buildQueryParams()
+    applyFiltersBtn.addEventListener("click", async () => {
+      const from = fromDateInput.value;
+      const to = toDateInput.value;
+
+      const error = validateDates(from, to);
+
+      if (error) {
+        filtersError.textContent = error;
+        return;
+      }
+
+      filtersError.textContent = "";
+
+      console.log("Filtros aplicados:", {
+        from,
+        to,
+        query: buildQueryParams()
+      });
+
+      await loadDashboardData();
+    });
+
+    resetFiltersBtn.addEventListener("click", async () => {
+      fromDateInput.value = "";
+      toDateInput.value = "";
+      filtersError.textContent = "";
+
+      await loadDashboardData();
     });
 
     await loadDashboardData();
-  });
+  }
 
-  resetFiltersBtn.addEventListener("click", async () => {
-    fromDateInput.value = "";
-    toDateInput.value = "";
-    await loadDashboardData();
-  });
-
-  await loadDashboardData();
-}
-
-init();
+  init();
 });

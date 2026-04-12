@@ -19,19 +19,20 @@
             <section class="filters-section">
                 <h2>Filtros</h2>
                 <div class="filters-form">
-                    <div class="filters-group">
+                    <div class="filter-group">
                         <label for="from-date">Desde</label>
                         <input type="date" name="" id="from-date">
                     </div>
-                    <div class="filters-group">
+                    <div class="filter-group">
                         <label for="to-date">Hasta</label>
                         <input type="date" name="" id="to-date">
                     </div>
 
-                    <div class="filters-actions">
+                    <div class="filter-actions">
                         <button id="apply-filters-btn" type="button">Aplicar filtros</button>
                         <button id="reset-filters-btn" type="button">Limpiar</button>
                     </div>
+                    <p id="filters-error" class="filters-error"></p>
                 </div>
             </section>
 
@@ -56,10 +57,10 @@
                 </div>
             </section>
             
-            <section class="rankings-section">
+            <section class="ranking-section">
                 <h2>Rankings</h2>
 
-                <div class="rankings-grid">
+                <div class="ranking-grid">
                     <article class="ranking-card">
                         <h3>Top páginas</h3>
                         <ul id="top-pages-list">

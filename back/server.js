@@ -61,10 +61,27 @@ app.post("/events", async (req, res) => {
 //ENDPOINT para total de eventos
 app.get("/stats/total-events", async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { from, to } = req.query;
+
+    let query = `
       SELECT COUNT(*) AS total_events
       FROM events
-    `);
+      WHERE id IS NOT NULL
+    `;
+
+    const params = [];
+
+    if (from) {
+      query += ` AND DATE(created_at) >= ?`;
+      params.push(from);
+    }
+
+    if (to) {
+      query += ` AND DATE(created_at) <= ?`;
+      params.push(to);
+    }
+
+    const [rows] = await db.query(query, params);
 
     res.json(rows[0]);
   } catch (error) {
@@ -94,9 +111,32 @@ app.get("/stats/events-by-type", async (req, res) => {
 // ENDPOINT para agrupar eventos por día
 app.get("/stats/events-by-day", async (req, res) => {
   try {
-    const [rows] = await db.query(
-      'SELECT DATE_FORMAT(created_at, "%Y-%m-%d") AS date, COUNT(*) AS total FROM events GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d") ORDER BY date ASC',
-    );
+    const { from, to } = req.query;
+
+    let query = `
+      SELECT DATE_FORMAT(created_at, "%Y-%m-%d") AS date, COUNT(*) AS total
+      FROM events
+      WHERE id IS NOT NULL
+    `;
+
+    const params = [];
+
+    if (from) {
+      query += ` AND DATE(created_at) >= ?`;
+      params.push(from);
+    }
+
+    if (to) {
+      query += ` AND DATE(created_at) <= ?`;
+      params.push(to);
+    }
+
+    query += `
+      GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d")
+      ORDER BY date ASC
+    `;
+
+    const [rows] = await db.query(query, params);
 
     res.json(rows);
   } catch (error) {

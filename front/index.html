@@ -18,7 +18,21 @@
         <main class="dashboard-main">
             <section class="filters-section">
                 <h2>Filtros</h2>
-                <p>Añadir filtros por fecha</p>
+                <div class="filters-form">
+                    <div class="filters-group">
+                        <label for="from-date">Desde</label>
+                        <input type="date" name="" id="from-date">
+                    </div>
+                    <div class="filters-group">
+                        <label for="to-date">Hasta</label>
+                        <input type="date" name="" id="to-date">
+                    </div>
+
+                    <div class="filters-actions">
+                        <button id="apply-filters-btn" type="button">Aplicar filtros</button>
+                        <button id="reset-filters-btn" type="button">Limpiar</button>
+                    </div>
+                </div>
             </section>
 
             <section class="kpi-section">
@@ -35,9 +49,9 @@
                 </div>
             </section>
 
-            <section class="chart-section" id="events-chart-container">
+            <section class="chart-section">
                 <h2>Evolución de eventos</h2>
-                <div class="chart-box">
+                <div class="chart-box" id="events-chart-container">
                     <p>Gráfica temporal aquí</p>
                 </div>
             </section>
@@ -46,13 +60,13 @@
                 <h2>Rankings</h2>
 
                 <div class="rankings-grid">
-                    <article class="rankings-card">
+                    <article class="ranking-card">
                         <h3>Top páginas</h3>
                         <ul id="top-pages-list">
                             <li>Sin datos</li>
                         </ul>
                     </article>
-                    <article class="rankings-card">
+                    <article class="ranking-card">
                         <h3>Top títulos</h3>
                         <ul id="top-titles-list">
                             <li>Sin datos</li>
